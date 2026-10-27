@@ -5,3 +5,7 @@
 -- Порядок: cost по убыванию, при равенстве name по возрастанию
 -- Строк:   29
 
+SELECT name, cost
+FROM items
+WHERE (cost BETWEEN 2000 and 3000) and (is_recipe IS NOT TRUE)
+ORDER BY cost DESC, name ASC;
