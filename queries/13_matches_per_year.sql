@@ -5,7 +5,10 @@
 -- Порядок: year по возрастанию
 -- Строк:   10
 
-SELECT EXTRACT(YEAR FROM started_at) as year, count(match_id) as matches, count(tournament_id) as tournament_matches
+SELECT
+    EXTRACT(YEAR FROM started_at) AS year,
+    COUNT(match_id) AS matches,
+    COUNT(tournament_id) AS tournament_matches
 FROM matches
-group by EXTRACT(YEAR FROM started_at)
-ORDER BY EXTRACT(YEAR FROM started_at) ASC
+GROUP BY EXTRACT(YEAR FROM started_at)
+ORDER BY EXTRACT(YEAR FROM started_at) ASC;

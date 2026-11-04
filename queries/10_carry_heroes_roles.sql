@@ -5,8 +5,18 @@
 -- Порядок: name по возрастанию, внутри героя role по возрастанию
 -- Строк:   47
 
-SELECT h.name, h.primary_attr, h.attack_type, hr.role
-FROM heroes h
-inner join hero_roles hr on hr.hero_id = h.hero_id
-WHERE exists(select * from hero_roles hr2 where hr2.hero_id = h.hero_id AND hr2.role = 'carry')
-ORDER BY h.name ASC, hr.role ASC
+SELECT
+    h.name,
+    h.primary_attr,
+    h.attack_type,
+    hr.role
+FROM heroes AS h
+INNER JOIN hero_roles AS hr ON hr.hero_id = h.hero_id
+WHERE EXISTS (
+    SELECT
+        *
+    FROM hero_roles AS hr2
+    WHERE hr2.hero_id = h.hero_id
+        AND hr2.role = 'carry'
+)
+ORDER BY h.name ASC, hr.role ASC;

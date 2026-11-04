@@ -6,7 +6,12 @@
 -- Порядок: started_at по возрастанию
 -- Строк:   78
 
-SELECT match_id, started_at, duration_sec, winner
+SELECT
+    match_id,
+    started_at,
+    duration_sec,
+    winner
 FROM matches
-WHERE duration_sec > 3600 and EXTRACT(YEAR FROM started_at AT TIME ZONE 'UTC') = 2024
+WHERE duration_sec > 3600
+    AND EXTRACT(YEAR FROM started_at AT TIME ZONE 'UTC') = 2024
 ORDER BY started_at ASC;

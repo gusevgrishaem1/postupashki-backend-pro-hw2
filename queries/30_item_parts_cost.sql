@@ -6,27 +6,34 @@
 -- Порядок: diff по убыванию, при равенстве name по возрастанию
 -- Строк:   77
 
-with recursive tree as (
+WITH RECURSIVE tree AS (
     SELECT
-    ir.item_id as root_id,
-    ir.component_id,
-    ir.quantity as qty_total
-    from item_recipe ir
-    union all
-    select t.root_id, ir.component_id, t.qty_total * ir.quantity as qty_total
-    FROM tree t
-    inner join item_recipe ir on ir.item_id = t.component_id
-) select
-      i.name, i.cost,
-      sum(part.cost * t.qty_total) as parts_cost,
-      sum(t.qty_total) as base_parts,
-      sum(part.cost * t.qty_total) - i.cost as diff
-  from tree t
-inner join items i on i.item_id = t.root_id
-inner join items part on part.item_id = t.component_id
-where not exists(
-    select * from item_recipe r
-             where r.item_id = t.component_id
+        ir.item_id AS root_id,
+        ir.component_id,
+        ir.quantity AS qty_total
+    FROM item_recipe AS ir
+    UNION ALL
+    SELECT
+        t.root_id,
+        ir.component_id,
+        t.qty_total * ir.quantity AS qty_total
+    FROM tree AS t
+    INNER JOIN item_recipe AS ir ON ir.item_id = t.component_id
 )
-group by  i.name, i.cost
-order by diff DESC, i.name ASC
+SELECT
+    i.name,
+    i.cost,
+    SUM(part.cost * t.qty_total) AS parts_cost,
+    SUM(t.qty_total) AS base_parts,
+    SUM(part.cost * t.qty_total) - i.cost AS diff
+FROM tree AS t
+INNER JOIN items AS i ON i.item_id = t.root_id
+INNER JOIN items AS part ON part.item_id = t.component_id
+WHERE NOT EXISTS (
+    SELECT
+        *
+    FROM item_recipe AS r
+    WHERE r.item_id = t.component_id
+)
+GROUP BY i.name, i.cost
+ORDER BY diff DESC, i.name ASC;

@@ -6,12 +6,27 @@
 -- Порядок: started_at по возрастанию
 -- Строк:   2
 
-SELECT t.name as tournament, t.started_at, t.prize_pool,
-       coalesce((SELECT sum(tou.prize_pool) FROM tournaments tou where tou.started_at < t.started_at), 0) as prev_total,
-       coalesce((SELECT COUNT(tou.tournament_id) FROM tournaments tou where tou.started_at < t.started_at), 0) as prev_count,
-       count(m.match_id) as matches_played
-FROM tournaments t
-LEFT JOIN matches m on m.tournament_id = t.tournament_id
-WHERE t.prize_pool > coalesce((SELECT sum(tou.prize_pool) FROM tournaments tou where tou.started_at < t.started_at), 0)
-GROUP BY t.name, t.started_at, t.prize_pool
-ORDER BY t.started_at ASC
+SELECT
+    tou.name AS tournament,
+    tou.started_at,
+    tou.prize_pool,
+    COALESCE((
+        SELECT SUM(previous_tournament.prize_pool)
+        FROM tournaments AS previous_tournament
+        WHERE previous_tournament.started_at < tou.started_at
+    ), 0) AS prev_total,
+    (
+        SELECT COUNT(*)
+        FROM tournaments AS previous_tournament
+        WHERE previous_tournament.started_at < tou.started_at
+    ) AS prev_count,
+    COUNT(m.match_id) AS matches_played
+FROM tournaments AS tou
+LEFT JOIN matches AS m ON m.tournament_id = tou.tournament_id
+WHERE tou.prize_pool > COALESCE((
+    SELECT SUM(previous_tournament.prize_pool)
+    FROM tournaments AS previous_tournament
+    WHERE previous_tournament.started_at < tou.started_at
+), 0)
+GROUP BY tou.name, tou.started_at, tou.prize_pool
+ORDER BY tou.started_at ASC;

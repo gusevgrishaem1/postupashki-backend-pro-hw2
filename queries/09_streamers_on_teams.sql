@@ -5,10 +5,16 @@
 -- Порядок: followers по убыванию, при равенстве streamer по возрастанию
 -- Строк:   16
 
-SELECT  s.nickname as streamer, pf.name as platform, p.nickname as player, t.name as team, t.tag, s.followers
-from streamers s
-inner join platforms pf on pf.platform_id = s.platform_id
-inner join players p on p.player_id = s.player_id
-inner join team_members tm on p.player_id = tm.player_id and tm.left_at IS NULL
-inner join teams t on t.team_id = tm.team_id
-order by s.followers DESC, pf.name ASC
+SELECT
+    s.nickname AS streamer,
+    pl.name AS platform,
+    p.nickname AS player,
+    t.name AS team,
+    t.tag,
+    s.followers
+FROM streamers AS s
+INNER JOIN platforms AS pl ON pl.platform_id = s.platform_id
+INNER JOIN players AS p ON p.player_id = s.player_id
+INNER JOIN team_members AS tm ON p.player_id = tm.player_id AND tm.left_at IS NULL
+INNER JOIN teams AS t ON t.team_id = tm.team_id
+ORDER BY s.followers DESC, s.nickname ASC;
