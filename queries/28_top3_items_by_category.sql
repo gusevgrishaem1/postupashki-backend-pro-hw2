@@ -6,3 +6,32 @@
 -- Порядок: category по возрастанию, затем place по возрастанию
 -- Строк:   9
 
+WITH pre_q as (
+SELECT
+    CASE
+        WHEN i.is_recipe THEN 'recipe'
+        WHEN exists(select * from item_recipe where item_id = i.item_id) THEN 'assembled'
+        ELSE 'basic'
+    END as category,
+    i.name,
+    i.cost,
+    count(mi.*) as purchases
+FROM items i
+LEFT JOIN match_items mi on mi.item_id = i.item_id
+GROUP BY category, i.name, i.cost
+), pre_q2 as (
+SELECT
+    category,
+    ROW_NUMBER() OVER (PARTITION BY category ORDER BY cost DESC, name) as place,
+    name,
+    cost,
+    purchases
+FROM pre_q
+) SELECT
+      category,
+      place,
+    name,
+      cost,
+      purchases
+FROM pre_q2
+WHERE place <= 3
