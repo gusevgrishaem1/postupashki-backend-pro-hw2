@@ -16,8 +16,9 @@ FROM streamers AS s
 INNER JOIN platforms AS pl ON pl.platform_id = s.platform_id
 LEFT JOIN team_members AS tm ON tm.player_id = s.player_id AND tm.left_at IS NULL
 LEFT JOIN teams AS t ON t.team_id = tm.team_id
-INNER JOIN match_players AS mp ON mp.player_id = s.player_id
-WHERE NOT EXISTS (
+LEFT JOIN match_players AS mp ON mp.player_id = s.player_id
+WHERE s.player_id IS NOT NULL
+AND NOT EXISTS (
     SELECT
         *
     FROM match_players AS mp

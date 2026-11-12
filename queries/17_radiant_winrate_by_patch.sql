@@ -8,11 +8,13 @@
 
 SELECT
     pa.version,
-    COUNT(DISTINCT m.match_id) AS matches,
-    COUNT(DISTINCT ma.match_id) AS radiant_wins,
-    ROUND(100.0 * COUNT(DISTINCT ma.match_id) / COUNT(DISTINCT m.match_id), 2) AS radiant_winrate
+    COUNT(*) AS matches,
+    COUNT(*) FILTER (WHERE m.winner = 'radiant') AS radiant_wins,
+    ROUND(
+            100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*),
+            2
+    ) AS radiant_winrate
 FROM patches AS pa
 INNER JOIN matches AS m ON pa.patch_id = m.patch_id
-LEFT JOIN matches AS ma ON pa.patch_id = ma.patch_id AND ma.winner = 'radiant'
 GROUP BY pa.version
-ORDER BY ROUND(100.0 * COUNT(DISTINCT ma.match_id) / COUNT(DISTINCT m.match_id), 2) DESC, pa.version ASC;
+ORDER BY 100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*) DESC, pa.version ASC;
