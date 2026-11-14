@@ -17,4 +17,4 @@ SELECT
 FROM patches AS pa
 INNER JOIN matches AS m ON pa.patch_id = m.patch_id
 GROUP BY pa.version
-ORDER BY 100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*) DESC, pa.version ASC;
+ORDER BY ROUND(100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*), 2) DESC, pa.version ASC;

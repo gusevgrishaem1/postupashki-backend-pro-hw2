@@ -30,8 +30,8 @@ SELECT
     bh.version,
     bh.hero,
     bh.bans,
-    coalesce(ph.picks, 0),
-    bh.bans - coalesce(ph.picks, 0) AS diff
+    coalesce(ph.picks, 0) as picks,
+    coalesce(bh.bans - ph.picks, 0) AS diff
 FROM banned_heroes AS bh
 LEFT JOIN picked_heroes AS ph ON bh.version = ph.version AND bh.hero = ph.hero
 WHERE bh.bans > ph.picks
