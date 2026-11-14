@@ -6,3 +6,15 @@
 -- Порядок: radiant_winrate (округлённое) по убыванию, при равенстве version по возрастанию
 -- Строк:   12
 
+SELECT
+    pa.version,
+    COUNT(*) AS matches,
+    COUNT(*) FILTER (WHERE m.winner = 'radiant') AS radiant_wins,
+    ROUND(
+            100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*),
+            2
+    ) AS radiant_winrate
+FROM patches AS pa
+INNER JOIN matches AS m ON pa.patch_id = m.patch_id
+GROUP BY pa.version
+ORDER BY ROUND(100.0 * COUNT(*) FILTER (WHERE m.winner = 'radiant') / COUNT(*), 2) DESC, pa.version ASC;

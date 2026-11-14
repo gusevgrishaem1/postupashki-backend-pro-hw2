@@ -6,3 +6,12 @@
 -- Порядок: duration_sec по убыванию, при равенстве match_id по возрастанию
 -- Строк:   56
 
+SELECT
+    m.match_id,
+    DATE(m.started_at AT TIME ZONE 'UTC') AS match_date,
+    m.duration_sec,
+    tou.name AS tournament_name
+FROM matches AS m
+LEFT JOIN tournaments AS tou ON m.tournament_id = tou.tournament_id
+WHERE m.duration_sec >= 4700
+ORDER BY m.duration_sec DESC, m.match_id ASC;
